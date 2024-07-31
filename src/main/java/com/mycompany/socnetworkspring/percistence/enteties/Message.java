@@ -29,12 +29,12 @@ public class Message {
     @Column(name = "message_text")
     private String messageText;
 
-    @NotNull
+//    @NotNull
     @Column(name = "created_at", insertable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
 //    @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
-    @NotNull
+//    @NotNull
     @Column(name = "edited_at", insertable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
 //    @Column(name = "edited_at", nullable = false)
     private Instant editedAt;

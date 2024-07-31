@@ -1,20 +1,17 @@
 package com.mycompany.socnetworkspring.presentation;
 
-
 import com.mycompany.socnetworkspring.exception.ResourceNotFoundException;
 import com.mycompany.socnetworkspring.percistence.dto.UsersTypeDTO;
 import com.mycompany.socnetworkspring.percistence.enteties.UsersType;
 import com.mycompany.socnetworkspring.service.UsersTypeService;
-import jakarta.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,11 +44,9 @@ public class UsersTypeController {
     public void deleteUsersType(@PathVariable Long id) {
       usersTypeService.deleteUsersType(id);
     }
-
-
     @PostMapping(consumes = "application/json", produces = "application/json")
     @ResponseBody
-    public ResponseEntity<UsersType> createUsersType(@RequestBody UsersTypeDTO newUserTypeDTO, HttpServletRequest request) {
+    public ResponseEntity<UsersType> createUsersType(@RequestBody UsersTypeDTO newUserTypeDTO) {
         logger.info("Received request to create UsersType: {}", newUserTypeDTO);
 
         UsersType newUserType = new UsersType();
@@ -61,33 +56,27 @@ public class UsersTypeController {
         try {
             UsersType createdUsersType = usersTypeService.createUsersType(newUserType);
             if (createdUsersType != null) {
-                URI location = ServletUriComponentsBuilder.fromRequestUri(request)
-                        .path("/{id}")
-                        .buildAndExpand(createdUsersType.getId())
-                        .toUri();
                 logger.info("Successfully created UsersType with ID: {}", createdUsersType.getId());
-                return ResponseEntity.created(location).body(createdUsersType);
+                return ResponseEntity.status(HttpStatus.CREATED).body(createdUsersType);
             } else {
                 logger.error("Failed to create UsersType");
-                return ResponseEntity.status(500).body(null);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
             }
         } catch (Exception e) {
             logger.error("Exception occurred while creating UsersType", e);
-            return ResponseEntity.status(500).body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 
+
+
     @PutMapping(path = "/{id}", consumes = "application/json", produces = "application/json")
     @ResponseBody
-    public ResponseEntity<UsersType> updateUsersType(@PathVariable("id") Long id, @RequestBody UsersTypeDTO updateUserTypeDTO, HttpServletRequest request) {
+    public ResponseEntity<UsersType> updateUsersType(@PathVariable("id") Long id, @RequestBody UsersTypeDTO updateUserTypeDTO) {
         logger.info("Received request to update UsersType with ID: {}", id);
 
         try {
             UsersType updatedUsersType = usersTypeService.updateUsersType(id, updateUserTypeDTO);
-            URI location = ServletUriComponentsBuilder.fromRequestUri(request)
-                    .path("/{id}")
-                    .buildAndExpand(updatedUsersType.getId())
-                    .toUri();
             logger.info("Successfully updated UsersType with ID: {}", updatedUsersType.getId());
             return ResponseEntity.ok(updatedUsersType);
         } catch (ResourceNotFoundException e) {
@@ -98,4 +87,6 @@ public class UsersTypeController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+
+
 }
